@@ -36,12 +36,7 @@ class TestSuccessMessageOnProductPage():
     def test_message_disappeared_after_adding_product_to_basket(self):
         self.page.add_product_to_basket()
         self.page.should_disappear_success_message()
-        
-    @pytest.mark.need_review
-    def test_guest_can_add_product_to_basket(self):
-        self.page.add_product_to_basket()
-        self.page.should_be_correct_product_in_basket()
-        self.page.should_be_correct_price_in_basket()
+
 
 @pytest.mark.product_page
 class TestSuccessMessageOnProductPage():
@@ -61,7 +56,11 @@ class TestSuccessMessageOnProductPage():
         basket_page.should_not_be_items_in_basket()
         basket_page.should_be_empty_basket_text()
         
-    
+    @pytest.mark.need_review 
+    def test_guest_can_add_product_to_basket(self):
+        self.page.add_product_to_basket()
+        self.page.should_be_correct_product_in_basket()
+        self.page.should_be_correct_price_in_basket()    
 
 @pytest.mark.user_on_product_page
 class TestUserAddToBasketFromProductPage:
