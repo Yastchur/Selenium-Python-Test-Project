@@ -14,7 +14,8 @@ class TestLoginOnProductPage():
     
     def test_guest_should_see_login_link_on_product_page(self):
         self.page.should_be_login_link()
-        
+    
+    @pytest.mark.need_review   
     def test_guest_can_go_to_login_page_from_product_page(self):
         self.page.go_to_login_page()    
 
@@ -33,8 +34,14 @@ class TestSuccessMessageOnProductPage():
         
     @pytest.mark.xfail(reason="Сообщение не исчезает автоматически — баг или фича")
     def test_message_disappeared_after_adding_product_to_basket(self):
-        page.add_product_to_basket()
-        page.should_disappear_success_message()
+        self.page.add_product_to_basket()
+        self.page.should_disappear_success_message()
+        
+    @pytest.mark.need_review
+    def test_guest_can_add_product_to_basket(self):
+        self.page.add_product_to_basket()
+        self.page.should_be_correct_product_in_basket()
+        self.page.should_be_correct_price_in_basket()
 
 @pytest.mark.product_page
 class TestSuccessMessageOnProductPage():
@@ -47,11 +54,14 @@ class TestSuccessMessageOnProductPage():
     def test_guest_cant_see_success_message(self):
         self.page.should_not_be_success_message()
 
+    @pytest.mark.need_review
     def test_guest_cant_see_product_in_basket_opened_from_product_page(self, browser):
         self.page.go_to_basket()
         basket_page = BasketPage(browser, browser.current_url)
         basket_page.should_not_be_items_in_basket()
         basket_page.should_be_empty_basket_text()
+        
+    
 
 @pytest.mark.user_on_product_page
 class TestUserAddToBasketFromProductPage:
@@ -67,16 +77,15 @@ class TestUserAddToBasketFromProductPage:
         login_page.should_be_authorized_user()
 
         self.link = "http://selenium1py.pythonanywhere.com/catalogue/the-shellcoders-handbook_209/"
+        self.page = ProductPage(browser, self.link)
+        self.page.open()
 
-    def test_user_cant_see_success_message(self, browser):
-        page = ProductPage(browser, self.link)
-        page.open()
-        page.should_not_be_success_message()
+    def test_user_cant_see_success_message(self):
+        self.page.should_not_be_success_message()
 
+    @pytest.mark.need_review
     def test_user_can_add_product_to_basket(self, browser):
-        page = ProductPage(browser, self.link)
-        page.open()
-        page.add_product_to_basket()
-        page.should_be_correct_product_in_basket()
-        page.should_be_correct_price_in_basket()
+        self.page.add_product_to_basket()
+        self.page.should_be_correct_product_in_basket()
+        self.page.should_be_correct_price_in_basket()
 
