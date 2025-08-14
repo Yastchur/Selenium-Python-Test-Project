@@ -1,6 +1,8 @@
 import pytest
+import time
 from pages.product_page import ProductPage
 from pages.basket_page import BasketPage
+from pages.login_page import LoginPage
 
 @pytest.mark.login_on_product_page
 class TestLoginOnProductPage():
@@ -50,4 +52,31 @@ class TestSuccessMessageOnProductPage():
         basket_page = BasketPage(browser, browser.current_url)
         basket_page.should_not_be_items_in_basket()
         basket_page.should_be_empty_basket_text()
+
+@pytest.mark.user_on_product_page
+class TestUserAddToBasketFromProductPage:
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, browser):
+        login_url = "http://selenium1py.pythonanywhere.com/en-gb/accounts/login/"
+        login_page = LoginPage(browser, login_url)
+        login_page.open()
+
+        email = str(time.time()) + "@fakemail.org"
+        password = "securePassword123"
+        login_page.register_new_user(email, password)
+        login_page.should_be_authorized_user()
+
+        self.link = "http://selenium1py.pythonanywhere.com/catalogue/the-shellcoders-handbook_209/"
+
+    def test_user_cant_see_success_message(self, browser):
+        page = ProductPage(browser, self.link)
+        page.open()
+        page.should_not_be_success_message()
+
+    def test_user_can_add_product_to_basket(self, browser):
+        page = ProductPage(browser, self.link)
+        page.open()
+        page.add_product_to_basket()
+        page.should_be_correct_product_in_basket()
+        page.should_be_correct_price_in_basket()
 
